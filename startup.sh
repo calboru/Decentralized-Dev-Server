@@ -70,25 +70,17 @@ chown -R "$USER_NAME:$USER_NAME" "$USER_HOME" "$STORAGE_DIR"
 # 🔟 Force default shell for SSH and HOME for developer
 usermod -s /bin/zsh "$USER_NAME"
 echo 'export HOME=/home/developer' >> "$USER_HOME/.zshrc"
+
 echo -e 'export HOME=/home/developer\nexec zsh' > /etc/profile.d/developer_home.sh
 chmod +x /etc/profile.d/developer_home.sh
 
-# ✅ Persist aliases and PATH in ~/.zshrc (idempotent)
-# pp alias
-grep -q '^alias pp=' "$ZSHRC" || \
-  echo 'alias pp="/home/developer/npm-global/bin/pnpm"' | sudo -u "$USER_NAME" tee -a "$ZSHRC" >/dev/null
-
-# cloudflared alias (add both spellings just in case)
-grep -q '^alias cloudlfared=' "$ZSHRC" || \
-  echo 'alias cloudlfared="/home/developer/bin/cloudflared"' | sudo -u "$USER_NAME" tee -a "$ZSHRC" >/dev/null
-grep -q '^alias cloudflared=' "$ZSHRC" || \
-  echo 'alias cloudflared="/home/developer/bin/cloudflared"' | sudo -u "$USER_NAME" tee -a "$ZSHRC" >/dev/null
-
-# ensure npm-global/bin is in PATH
-grep -q '/home/developer/npm-global/bin' "$ZSHRC" || \
-  echo 'export PATH=$PATH:/home/developer/npm-global/bin' | sudo -u "$USER_NAME" tee -a "$ZSHRC" >/dev/null
-
-
+ 
+ 
+echo 'export PATH=$PATH:/home/developer/npm-global/bin' | sudo -u "$USER_NAME" tee -a "$ZSHRC" >/dev/null
+echo 'export PATH=$PATH:/home/developer/bin' | sudo -u "$USER_NAME" tee -a "$ZSHRC" >/dev/null
+echo 'alias cloudflared="/home/developer/bin/cloudflared"' | sudo -u "$USER_NAME" tee -a "$ZSHRC" >/dev/null
+echo 'alias pnpm="/home/developer/npm-global/bin/pnpm"' | sudo -u "$USER_NAME" tee -a "$ZSHRC" >/dev/null
+echo 'alias pp="/home/developer/npm-global/bin/pnpm"' | sudo -u "$USER_NAME" tee -a "$ZSHRC" >/dev/null  
 
 # 1️⃣1️⃣ Ensure SSH allows TCP forwarding
 SSHD_CONFIG="/config/sshd/sshd_config"
