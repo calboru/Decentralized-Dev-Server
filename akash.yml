@@ -1,0 +1,63 @@
+---
+version: '2.0'
+services:
+  remote-development:
+    image: okn2015/ssh-cloudflared:latest
+    expose:
+      - port: 2222
+        as: 2222
+        to:
+          - global: true
+    env:
+      - >-
+        PUBLIC_KEY= your super secret ssh pub key
+        Code Remote SSH Key
+      - USER_NAME=developer
+      - TZ=America/New_York
+    params:
+      storage:
+        storage:
+          mount: /storage
+          readOnly: false
+        vscodeserver:
+          mount: /home/developer/.vscode-server
+          readOnly: false
+        sshdconfig:
+          mount: /config/sshd
+          readOnly: false
+profiles:
+  compute:
+    remote-development:
+      resources:
+        cpu:
+          units: 4
+        memory:
+          size: 16Gi
+        storage:
+          - size: 1Gi
+          - name: storage
+            size: 100Gi
+            attributes:
+              persistent: true
+              class: beta3
+          - name: vscodeserver
+            size: 2Gi
+            attributes:
+              persistent: true
+              class: beta3
+          - name: sshdconfig
+            size: 10Mb
+            attributes:
+              persistent: true
+              class: beta3
+  placement:
+    dcloud:
+      pricing:
+        remote-development:
+          denom: ibc/170C677610AC31DF0904FFE09CD3B5C657492170E7E52372E48756B71E56F2F1
+          amount: 100000
+deployment:
+  remote-development:
+    dcloud:
+      profile: remote-development
+      count: 1
