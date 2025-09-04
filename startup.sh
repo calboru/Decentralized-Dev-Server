@@ -76,11 +76,14 @@ chmod +x /etc/profile.d/developer_home.sh
 
  
  
-echo 'export PATH=$PATH:/home/developer/npm-global/bin' | sudo -u "$USER_NAME" tee -a "$ZSHRC" >/dev/null
-echo 'export PATH=$PATH:/home/developer/bin' | sudo -u "$USER_NAME" tee -a "$ZSHRC" >/dev/null
-echo 'alias cloudflared="/home/developer/bin/cloudflared"' | sudo -u "$USER_NAME" tee -a "$ZSHRC" >/dev/null
-echo 'alias pnpm="/home/developer/npm-global/bin/pnpm"' | sudo -u "$USER_NAME" tee -a "$ZSHRC" >/dev/null
-echo 'alias pp="/home/developer/npm-global/bin/pnpm"' | sudo -u "$USER_NAME" tee -a "$ZSHRC" >/dev/null  
+# persist PATH updates
+echo 'export PATH=$PATH:/home/developer/npm-global/bin' >> "$ZSHRC"
+echo 'export PATH=$PATH:/home/developer/bin' >> "$ZSHRC"
+
+# persist aliases
+echo 'alias cloudflared="/home/developer/bin/cloudflared"' >> "$ZSHRC"
+echo 'alias pnpm="/home/developer/npm-global/bin/pnpm"' >> "$ZSHRC"
+echo 'alias pp="/home/developer/npm-global/bin/pnpm"' >> "$ZSHRC"
 
 # 1️⃣1️⃣ Ensure SSH allows TCP forwarding
 SSHD_CONFIG="/config/sshd/sshd_config"
